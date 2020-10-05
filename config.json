@@ -1,10 +1,9 @@
 {
 	"devices": [
 	{
-		"host": "",
-		"path": "",
+		"host": "192.168.0.220",
+		"path": "getstatus",
 		"name": "BrewPiLess"
 	}
-
 	]
 }

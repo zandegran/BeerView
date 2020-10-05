@@ -2,7 +2,7 @@
 
 
 const path = require('path')
-const {ipcMain, app, Menu, MenuItem, Tray, BrowserWindow} = require('electron')
+const {ipcMain, app, Menu, MenuItem, Tray, BrowserWindow, net, ClientRequest} = require('electron')
 var fs = require('fs');
 
 function createWindow () {
@@ -69,10 +69,14 @@ function getContextMenu (tare) {
   const contextMenu = new Menu()
   for (x in devices) {
     deviceJson = devices[x];
-    const item = new MenuItem({label: deviceJson.name, 
-      click: () => {
+    const item = new MenuItem({label: (tare ? "Tare " : "") + deviceJson.name, 
+      click: () => { 
+        if(tare) {
+
+        }
       }})
     contextMenu.append(item)
+    console.log(httpGet("http://"+deviceJson.host+"/"+deviceJson.path, contextMenu));
   }
   const separator = new MenuItem({type: 'separator'})
   contextMenu.append(separator)
@@ -121,6 +125,43 @@ function getContextMenu (tare) {
   //   ])
   //   return contextMenu
   // }
+}
+
+function httpGet(theUrl, cm)
+{
+  // const request = net.request({
+  //   method: 'GET',
+  //   protocol: 'http:',
+  //   hostname: '192.168.0.220',
+  //   port: 80,
+  //   path: '/getstatus'
+  // })
+  // request.on('response', (response) => {
+  //   console.log(`STATUS: ${response.statusCode}`);
+  //   response.on('error', (error) => {
+  //     console.log(`ERROR: ${JSON.stringify(error)}`)
+  //   })
+  // })
+  const request = net.request('http://192.168.0.220/getstatus')
+  request.on('response', (response) => {
+    console.log(`STATUS: ${response.statusCode}`)
+    console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+    response.on('data', (chunk) => {
+      console.log(`BODY: ${chunk}`)
+      return chunk
+      const item = new MenuItem({label: chunk, 
+      click: () => { 
+        if(tare) {
+
+        }
+      }})
+    cm.append(item)
+    })
+    response.on('end', () => {
+      console.log('No more data in response.')
+    })
+  })
+  request.end()
 }
 
 let appIcon = null
