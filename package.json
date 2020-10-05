@@ -1,0 +1,21 @@
+{
+  "name": "beerview",
+  "version": "1.0.0",
+  "description": "App to see keg status",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "test"
+  },
+  "keywords": [
+    "keg",
+    "beer",
+    "loadcell",
+    "status"
+  ],
+  "author": "Ansel Zandegran",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^10.1.3"
+  }
+}
