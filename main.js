@@ -2,7 +2,7 @@
 
 
 const path = require('path')
-const {ipcMain, app, Menu, Tray, BrowserWindow} = require('electron')
+const {ipcMain, app, Menu, MenuItem, Tray, BrowserWindow} = require('electron')
 var fs = require('fs');
 
 function createWindow () {
@@ -48,68 +48,79 @@ app.on('window-all-closed', function () {
 // code. You can also put them in separate files and require them here.
 
 function getSettings() {
-  return fs.readFile("config.json", 'utf-8', (err, data) => {
+  var data = fs.readFileSync("config.json", 'utf-8', (err, data) => {
         if(err){
             alert("An error ocurred reading the file :" + err.message)
             return
         }
-        // Change how to handle the file content
-        var obj = JSON.parse(data)
-        if (obj.devices) {
+    });
+  var obj = JSON.parse(data)
+if (obj.devices) {
           console.log("Devices found");
         }
         else {
           alert("No devices in config")
         }
-        return obj.devices
-    });
+  return obj.devices
 }
 
 function getContextMenu (tare) {
   var devices = getSettings()
-  console.log(devices);
-  if (tare) {
-    const contextMenu = Menu.buildFromTemplate([{
-        label: 'Remove',
-        click: () => {
-          event.sender.send('tray-removed')
-        }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Tare Keg1',
-        click: () => {
-        }
-      },
-      {
-        label: 'Tare Keg2',
-        click: () => {
-        }
-      }
-      ])
-      return contextMenu
-  }
-  else {
-    const contextMenu = Menu.buildFromTemplate([{
-      label: 'Remove',
+  const contextMenu = new Menu()
+  for (x in devices) {
+    deviceJson = devices[x];
+    const item = new MenuItem({label: deviceJson.name, 
       click: () => {
-        event.sender.send('tray-removed')
-      }
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: 'Stat Keg1'
-    },
-    {
-      label: 'Stat Keg2'
-    }
-    ])
-    return contextMenu
+      }})
+    contextMenu.append(item)
   }
+  const separator = new MenuItem({type: 'separator'})
+  contextMenu.append(separator)
+  const reloadConfigItem = new MenuItem({label: 'Reload Config'})
+  contextMenu.append(reloadConfigItem)
+  return contextMenu
+  // if (tare) {
+  //   const contextMenu = Menu.buildFromTemplate([{
+  //       label: 'Remove',
+  //       click: () => {
+  //         event.sender.send('tray-removed')
+  //       }
+  //     },
+  //     {
+  //       type: 'separator'
+  //     },
+  //     {
+  //       label: 'Tare Keg1',
+  //       click: () => {
+  //       }
+  //     },
+  //     {
+  //       label: 'Tare Keg2',
+  //       click: () => {
+  //       }
+  //     }
+  //     ])
+  //     return contextMenu
+  // }
+  // else {
+  //   const contextMenu = Menu.buildFromTemplate([{
+  //     label: 'Remove',
+  //     click: () => {
+  //       event.sender.send('tray-removed')
+  //     }
+  //   },
+  //   {
+  //     type: 'separator'
+  //   },
+  //   {
+  //     label: 'Stat Keg1'
+  //   },
+  //   {
+  //     label: 'Stat Keg2'
+  //   }
+  //   ])
+  //   return contextMenu
+  // }
 }
 
 let appIcon = null
