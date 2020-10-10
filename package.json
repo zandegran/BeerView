@@ -1,5 +1,7 @@
 {
   "name": "beerview",
+  "internalName": "TierraDesktop",
+  "productName": "TierraDesktop",
   "version": "1.0.0",
   "description": "App to see keg status",
   "main": "main.js",
